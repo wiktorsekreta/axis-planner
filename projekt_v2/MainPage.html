@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AXIS - Planner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;600&display=swap">
+    <link rel="stylesheet" href="./mainPageStyle.css">
+</head>
+
+<body>
+    <div class="planner-container">
+
+
+        <div class="header">
+            <h1>AXIS</h1>
+            <div class="user-info">
+                <span class="username">Użytkownik</span>
+                <a href="index.html">
+                    <button class="btn logout-btn">Wyloguj</button>
+                </a>
+            </div>
+        </div>
+
+
+        <div class="view-toggle">
+            <button class="btn toggle-btn active" data-view="day">Dzień</button>
+            <button class="btn toggle-btn" data-view="week">Tydzień</button>
+            <button class="btn toggle-btn" data-view="month">Miesiąc</button>
+        </div>
+
+
+        <div class="calendar-box">
+
+            <div class="calendar-header">
+                <button class="nav-btn" id="prev">‹</button>
+                <h2 class="date-title" id="dateTitle">–</h2>
+                <button class="nav-btn" id="next">›</button>
+            </div>
+
+            <div id="monthView" class="month-view hidden">
+                <div class="month-grid-header">
+                    <span>Pn</span><span>Wt</span><span>Śr</span>
+                    <span>Cz</span><span>Pt</span><span>So</span><span>Nd</span>
+                </div>
+                <div class="month-grid" id="monthGrid"></div>
+            </div>
+
+
+            <div id="weekView" class="week-view hidden">
+                <div class="week-grid" id="weekGrid"></div>
+            </div>
+
+
+            <div id="dayView" class="day-view">
+
+
+                <div class="add-task-section">
+                    <h3>Dodaj zadanie</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="task-title">Tytuł</label>
+                            <input type="text" id="task-title" placeholder="Tytuł zadania" maxlength="80">
+                        </div>
+                        <div class="form-group form-group--small">
+                            <label for="task-time">Godzina</label>
+                            <input type="time" id="task-time">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="task-desc">Opis (opcjonalnie)</label>
+                        <textarea id="task-desc" placeholder="Dodaj opis..." rows="2"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Kategorie</label>
+                        <div class="cat-chips-picker" id="catChipsPicker">
+                            <span class="cat-no-cats" id="catNoCats">Brak kategorii — dodaj je poniżej</span>
+                        </div>
+                    </div>
+                    <button class="btn add-btn" id="addTaskBtn">+ Dodaj zadanie</button>
+                </div>
+
+
+                <div class="tasks-section">
+                    <div class="tasks-header">
+                        <h3>Zadania</h3>
+                        <span class="task-count" id="taskCount">0</span>
+                    </div>
+                    <div id="taskList" class="task-list">
+                        <div class="empty-state" id="emptyState">
+                            <span>Brak zadań na ten dzień</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="categories-box">
+            <div class="categories-box-header">
+                <h3>Kategorie</h3>
+                <span class="cat-count-badge" id="catCount">0</span>
+            </div>
+            <div class="cat-add-row">
+                <input type="text" id="cat-name" placeholder="Nazwa nowej kategorii...">
+                <button class="btn cat-add-btn" id="addCatBtn">+ Dodaj</button>
+            </div>
+            <div class="cat-list" id="catList">
+                <div class="cat-empty" id="catEmpty">Brak kategorii</div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="./mainPageJS.js" defer></script>
+</body>
+
+</html>

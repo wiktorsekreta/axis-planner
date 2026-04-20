@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AXIS - Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&display=swap">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="all">
+        <h1>AXIS</h1>
+        <form class="box">
+            <div class="form">
+                <label for="username">nazwa uzytkownika</label>
+                <input type="text" id="username" placeholder="Wpisz swoja nazwe uzytkownika" autocomplete="username">
+            </div>
+            <div class="form">
+                <label for="password">haslo</label>
+                <img src="./visibility_16dp_000000_FILL0_wght400_GRAD0_opsz20.svg" alt="pokaż hasło" class="open-eye"
+                    id="togglePassword" width="20" height="20">
+                <input type="password" id="password" placeholder="Wpisz swoje haslo" autocomplete="current-password">
+            </div>
+            <div class="remember">
+                <input type="checkbox" id="remember">
+                <label for="remember">Zapamiętaj mnie</label>
+            </div>
+            <a href="./MainPage.html">
+                <button type="button" class="btn">Zaloguj</button>
+            </a>
+        </form>
+        <h5>Nie masz konta? <a href="index1.html">Zarejestruj się</a></h5>
+    </div>
+    <script src="./scriptLog.js" defer></script>
+</body>
+
+</html>
