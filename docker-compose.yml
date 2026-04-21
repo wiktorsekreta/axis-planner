@@ -1,0 +1,60 @@
+services:
+
+  php:
+    build: ./php
+    ports:
+      - '8080:80'
+    volumes:
+      - ./www:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_USER: user
+      DB_PASS: haslo123
+      DB_NAME: axis
+    networks:
+      - projekt_net
+
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: axis
+      MYSQL_USER: user
+      MYSQL_PASSWORD: haslo123
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    ports:
+      - '3306:3306'
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-proot']
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    networks:
+      - projekt_net
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    ports:
+      - '8081:80'
+    environment:
+      PMA_HOST: db
+      PMA_USER: user
+      PMA_PASSWORD: haslo123
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - projekt_net
+
+networks:
+  projekt_net:
+    driver: bridge
+
+volumes:
+  db_data:

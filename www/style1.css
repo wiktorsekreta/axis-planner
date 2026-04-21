@@ -243,3 +243,9 @@ a:hover {
     button { padding: 10px; margin-top: 0; }
     h5 { margin-top: 8px; }
 }
+.form-error {
+    color: #f44336;
+    font-size: 13px;
+    min-height: 18px;
+    margin-bottom: 8px;
+}

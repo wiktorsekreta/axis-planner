@@ -319,3 +319,10 @@ a:hover {
 		margin-top: 10px;
 	}
 }
+
+.form-error {
+    color: #f44336;
+    font-size: 13px;
+    min-height: 18px;
+    margin-bottom: 8px;
+}
