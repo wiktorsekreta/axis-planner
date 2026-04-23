@@ -30,16 +30,24 @@ document.querySelector('form').addEventListener('submit', async e => {
         return;
     }
 
-    const res  = await fetch('./api/register.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, password }),
-    });
-    const data = await res.json();
+    try {
+        // FormData wysyła jako multipart/form-data → PHP zawsze wypełnia $_POST
+        const form = new FormData();
+        form.append('username', username);
+        form.append('email',    email);
+        form.append('password', password);
+        const res  = await fetch('./api/register.php', {
+            method: 'POST',
+            body: form,
+        });
+        const data = await res.json();
 
-    if (res.ok) {
-        window.location.href = './index.html';
-    } else {
-        regError.textContent = data.error;
+        if (res.ok) {
+            window.location.href = './index.html';
+        } else {
+            regError.textContent = data.error;
+        }
+    } catch (err) {
+        regError.textContent = 'Błąd połączenia z serwerem.';
     }
 });

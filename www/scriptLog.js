@@ -18,10 +18,11 @@ document.querySelector('form').addEventListener('submit', async e => {
     const username = document.getElementById('username').value.trim();
     const password = passwordInput.value;
 
+    // URLSearchParams wysyła dane jako application/x-www-form-urlencoded
+    // → PHP może je odczytać przez $_POST
     const res  = await fetch('./api/login.php', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: new URLSearchParams({ username, password }),
     });
     const data = await res.json();
 

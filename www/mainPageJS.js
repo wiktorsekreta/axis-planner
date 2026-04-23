@@ -1,19 +1,16 @@
 'use strict';
 
-const STORAGE_KEY    = 'vesta_tasks';
-const CATEGORIES_KEY = 'vesta_categories';
-
 const DAYS_PL   = ['Niedziela', 'Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota'];
 const MONTHS_PL = ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec',
                    'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'];
 const SHORT_DAYS = ['Pn', 'Wt', 'Śr', 'Cz', 'Pt', 'So', 'Nd'];
 
 // ── STAN ───────────────────────────────────────────────────────────────────
-let currentView = 'day';
-let currentDate = new Date();
-let tasks       = loadStorage(STORAGE_KEY, {});
-let categories  = loadStorage(CATEGORIES_KEY, []);
-let selectedCatIds = [];
+let currentView    = 'day';
+let currentDate    = new Date();
+let tasks          = {};   // cache: { "YYYY-MM-DD": [{id, title, desc, time, done, categoryIds}] }
+let categories     = [];   // cache: [{id, name}]
+let selectedCatIds = [];   // ID kategorii wybranych przy dodawaniu zadania
 
 // ── DOM ────────────────────────────────────────────────────────────────────
 const $ = id => document.getElementById(id);
@@ -44,22 +41,87 @@ const catEls = {
 	catList:      $('catList'),
 };
 
-// ── INICJALIZACJA ──────────────────────────────────────────────────────────
+// ── EVENT LISTENERS ────────────────────────────────────────────────────────
 document.querySelectorAll('.toggle-btn').forEach(btn =>
 	btn.addEventListener('click', () => switchView(btn.dataset.view))
 );
-els.prev.addEventListener('click', navigate.bind(null, -1));
-els.next.addEventListener('click', navigate.bind(null, 1));
+els.prev.addEventListener('click', () => navigate(-1));
+els.next.addEventListener('click', () => navigate(1));
 els.addBtn.addEventListener('click', addTask);
 els.titleInput.addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
 catEls.addCatBtn.addEventListener('click', addCategory);
 catEls.catNameInput.addEventListener('keydown', e => { if (e.key === 'Enter') addCategory(); });
 
-renderCategories();
-render();
+// ── API ────────────────────────────────────────────────────────────────────
+// Wysyła POST jako application/x-www-form-urlencoded → PHP odczytuje przez $_POST.
+// Tablice (np. categoryIds) wysyłane jako cats[]=1&cats[]=2 → PHP: $_POST['cats'] = [1, 2].
+async function post(endpoint, params) {
+	const body = new URLSearchParams();
+	for (const [k, v] of Object.entries(params)) {
+		if (Array.isArray(v)) {
+			v.forEach(item => body.append(k + '[]', item));
+		} else {
+			body.set(k, String(v));
+		}
+	}
+	const res = await fetch(`./api/${endpoint}`, { method: 'POST', body });
+	return res.json();
+}
+
+// ── ŁADOWANIE DANYCH ───────────────────────────────────────────────────────
+// Pobiera zadania dla zakresu dat z bazy i wrzuca do lokalnego cache `tasks`.
+async function loadRange(from, to) {
+	const data = await post('tasks.php', { action: 'get', from, to });
+	// API zwraca { "YYYY-MM-DD": [...] } — scalamy z cache
+	if (data && typeof data === 'object' && !data.error) {
+		Object.assign(tasks, data);
+	}
+}
+
+// Wyznacza zakres dat dla aktualnego widoku i ładuje je z API.
+async function loadViewData() {
+	let from, to;
+	if (currentView === 'day') {
+		from = to = dateKey(currentDate);
+	} else if (currentView === 'week') {
+		const monday = getMonday(currentDate);
+		const sunday = new Date(monday);
+		sunday.setDate(sunday.getDate() + 6);
+		from = dateKey(monday);
+		to   = dateKey(sunday);
+	} else {
+		// Miesiąc: cały miesiąc od 1. do ostatniego dnia
+		const y = currentDate.getFullYear();
+		const m = currentDate.getMonth();
+		from = `${y}-${String(m + 1).padStart(2, '0')}-01`;
+		to   = dateKey(new Date(y, m + 1, 0));
+	}
+	await loadRange(from, to);
+}
+
+// ── INICJALIZACJA ──────────────────────────────────────────────────────────
+// Uruchamia się raz po załadowaniu strony:
+// pobiera kategorie i zadania z API, następnie renderuje widok.
+async function init() {
+	// Nazwa użytkownika z sessionStorage (ustawiona po zalogowaniu)
+	const username = sessionStorage.getItem('username') || 'Użytkownik';
+	document.querySelector('.username').textContent = username;
+
+	// Pobierz kategorie z bazy (GET zwraca tablicę [{id, name}])
+	const cats = await post('categories.php', { action: 'get' });
+	categories = Array.isArray(cats) ? cats : [];
+
+	// Pobierz zadania dla bieżącego widoku
+	await loadViewData();
+
+	renderCategories();
+	render();
+}
+
+init();
 
 // ── WIDOKI ─────────────────────────────────────────────────────────────────
-function switchView(view) {
+async function switchView(view) {
 	currentView = view;
 	document.querySelectorAll('.toggle-btn').forEach(b =>
 		b.classList.toggle('active', b.dataset.view === view)
@@ -67,15 +129,17 @@ function switchView(view) {
 	['day', 'week', 'month'].forEach(v =>
 		els[`${v}View`].classList.toggle('hidden', v !== view)
 	);
+	await loadViewData();
 	render();
 }
 
-function navigate(dir) {
+async function navigate(dir) {
 	const d = new Date(currentDate);
 	if      (currentView === 'day')   d.setDate(d.getDate() + dir);
 	else if (currentView === 'week')  d.setDate(d.getDate() + dir * 7);
 	else                              d.setMonth(d.getMonth() + dir);
 	currentDate = d;
+	await loadViewData();
 	render();
 }
 
@@ -106,7 +170,7 @@ function renderWeek() {
 	const selected = dateKey(currentDate);
 
 	for (let i = 0; i < 7; i++) {
-		const day  = new Date(monday);
+		const day      = new Date(monday);
 		day.setDate(day.getDate() + i);
 		const key      = dateKey(day);
 		const dayTasks = tasks[key] || [];
@@ -254,23 +318,38 @@ function renderTaskList(key) {
 }
 
 // ── OPERACJE NA ZADANIACH ──────────────────────────────────────────────────
-function addTask() {
+// Każda operacja: 1) wyślij POST do tasks.php, 2) zaktualizuj cache, 3) przerenderuj.
+
+async function addTask() {
 	const title = els.titleInput.value.trim();
 	if (!title) { flashError(els.titleInput); return; }
 
-	const key = dateKey(currentDate);
-	if (!tasks[key]) tasks[key] = [];
+	const key  = dateKey(currentDate);
+	const time = els.timeInput.value || '';
+	const desc = els.descInput.value.trim();
 
-	tasks[key].push({
-		id:          crypto.randomUUID(),
+	const data = await post('tasks.php', {
+		action: 'add',
 		title,
-		time:        els.timeInput.value || '',
-		desc:        els.descInput.value.trim(),
+		date:  key,
+		time,
+		desc,
+		cats:  selectedCatIds,  // tablica ID → wysyłana jako cats[]=1&cats[]=2
+	});
+
+	if (!data.ok) return;
+
+	// Optymistyczna aktualizacja cache (bez ponownego fetcha)
+	if (!tasks[key]) tasks[key] = [];
+	tasks[key].push({
+		id:          data.id,  // ID nadane przez bazę danych
+		title,
+		time,
+		desc,
 		done:        false,
 		categoryIds: [...selectedCatIds],
 	});
 
-	saveTasks();
 	els.titleInput.value = '';
 	els.timeInput.value  = '';
 	els.descInput.value  = '';
@@ -279,33 +358,49 @@ function addTask() {
 	renderTaskList(key);
 }
 
-function toggleDone(key, id) {
+async function toggleDone(key, id) {
+	const data = await post('tasks.php', { action: 'toggle', id });
+	if (!data.ok) return;
 	const t = (tasks[key] || []).find(x => x.id === id);
-	if (t) { t.done = !t.done; saveTasks(); renderTaskList(key); }
+	if (t) { t.done = data.done; renderTaskList(key); }
 }
 
-function deleteTask(key, id) {
-	if (!tasks[key]) return;
-	tasks[key] = tasks[key].filter(x => x.id !== id);
-	if (tasks[key].length === 0) delete tasks[key];
-	saveTasks();
-	renderTaskList(key);
+async function deleteTask(key, id) {
+	const data = await post('tasks.php', { action: 'delete', id });
+	if (!data.ok) return;
+	if (tasks[key]) {
+		tasks[key] = tasks[key].filter(x => x.id !== id);
+		renderTaskList(key);
+	}
 }
 
 // ── KATEGORIE ─────────────────────────────────────────────────────────────
-function addCategory() {
+async function addCategory() {
 	const name = catEls.catNameInput.value.trim();
 	if (!name) { flashError(catEls.catNameInput); return; }
-	categories.push({ id: crypto.randomUUID(), name });
-	saveCategories();
+
+	const data = await post('categories.php', { action: 'add', name });
+	if (!data.ok) return;
+
+	categories.push({ id: data.id, name });
 	catEls.catNameInput.value = '';
 	renderCategories();
 }
 
-function deleteCategory(id) {
+async function deleteCategory(id) {
+	const data = await post('categories.php', { action: 'delete', id });
+	if (!data.ok) return;
+
 	categories     = categories.filter(c => c.id !== id);
 	selectedCatIds = selectedCatIds.filter(cid => cid !== id);
-	saveCategories();
+
+	// Usuń kategorię z lokalnego cache zadań (bez ponownego fetcha)
+	Object.values(tasks).forEach(dayTasks =>
+		dayTasks.forEach(t => {
+			t.categoryIds = t.categoryIds.filter(cid => cid !== id);
+		})
+	);
+
 	renderCategories();
 	renderTaskList(dateKey(currentDate));
 }
@@ -361,15 +456,6 @@ function renderCategorySelector() {
 		els.catChipsPicker.appendChild(chip);
 	});
 }
-
-// ── STORAGE ────────────────────────────────────────────────────────────────
-function loadStorage(key, fallback) {
-	try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
-	catch { return fallback; }
-}
-
-function saveTasks()      { try { localStorage.setItem(STORAGE_KEY,    JSON.stringify(tasks));       } catch {} }
-function saveCategories() { try { localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories)); } catch {} }
 
 // ── HELPERS ────────────────────────────────────────────────────────────────
 function dateKey(d) {

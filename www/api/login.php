@@ -1,11 +1,17 @@
 <?php
 header('Content-Type: application/json');
 session_start();
-require __DIR__ . '/db.php';
 
-$data     = json_decode(file_get_contents('php://input'), true);
-$username = trim($data['username'] ?? '');
-$password =      $data['password'] ?? '';
+try {
+    require __DIR__ . '/db.php';
+} catch (Exception $e) {
+    http_response_code(503);
+    echo json_encode(['error' => 'Błąd połączenia z bazą danych.']);
+    exit;
+}
+
+$username = trim($_POST['username'] ?? '');
+$password =      $_POST['password'] ?? '';
 
 if (!$username || !$password) {
     http_response_code(400);

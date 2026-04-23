@@ -1,11 +1,17 @@
 <?php
 header('Content-Type: application/json');
-require __DIR__ . '/db.php';
 
-$data = json_decode(file_get_contents('php://input'), true);
-$username = trim($data['username'] ?? '');
-$email    = trim($data['email']    ?? '');
-$password =      $data['password'] ?? '';
+try {
+    require __DIR__ . '/db.php';
+} catch (Exception $e) {
+    http_response_code(503);
+    echo json_encode(['error' => 'Błąd połączenia z bazą danych.']);
+    exit;
+}
+
+$username = trim($_POST['username'] ?? '');
+$email    = trim($_POST['email']   ?? '');
+$password =      $_POST['password'] ?? '';
 
 if (!$username || !$email || !$password) {
     http_response_code(400);
@@ -19,16 +25,21 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     exit;
 }
 
-$stmt = $pdo->prepare('SELECT UserId FROM users WHERE UserName = ? OR Email = ?');
-$stmt->execute([$username, $email]);
-if ($stmt->fetch()) {
-    http_response_code(409);
-    echo json_encode(['error' => 'Użytkownik lub e-mail już istnieje.']);
-    exit;
+try {
+    $stmt = $pdo->prepare('SELECT UserId FROM users WHERE UserName = ? OR Email = ?');
+    $stmt->execute([$username, $email]);
+    if ($stmt->fetch()) {
+        http_response_code(409);
+        echo json_encode(['error' => 'Użytkownik lub e-mail już istnieje.']);
+        exit;
+    }
+
+    $hash = password_hash($password, PASSWORD_BCRYPT);
+    $pdo->prepare('INSERT INTO users (UserName, Email, Password) VALUES (?, ?, ?)')
+        ->execute([$username, $email, $hash]);
+
+    echo json_encode(['ok' => true]);
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode(['error' => 'Błąd serwera: ' . $e->getMessage()]);
 }
-
-$hash = password_hash($password, PASSWORD_BCRYPT);
-$pdo->prepare('INSERT INTO users (UserName, Email, Password) VALUES (?, ?, ?)')
-    ->execute([$username, $email, $hash]);
-
-echo json_encode(['ok' => true]);
