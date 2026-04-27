@@ -1,55 +1,71 @@
+/* Plik CSS dla strony logowania (index.html) */
+
+/* ── RESET ─────────────────────────────────────────────────────────────────── */
+/* Zerujemy domyślne marginesy i paddingi przeglądarki dla wszystkich elementów.
+   box-sizing: border-box sprawia, że padding i border są wliczone w szerokość elementu */
 * {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
 }
 
+/* ── ZMIENNE CSS ────────────────────────────────────────────────────────────── */
+/* Definiujemy własne zmienne (custom properties) — używamy ich niżej przez var(--nazwa).
+   Dzięki temu zmiana koloru w jednym miejscu działa w całym pliku. */
 :root {
-	--main-font: 'Bungee', cursive;
-	--text-color: whitesmoke;
-	--purple-color: #6511aaca;
-	--active-color: #6511aa;
+	--main-font:   'Bungee', cursive; /* czcionka logo AXIS */
+	--text-color:  whitesmoke;        /* jasny kolor tekstu na ciemnym tle */
+	--purple-color: #6511aaca;        /* fioletowy z przezroczystością (ca = ~80%) */
+	--active-color: #6511aa;          /* fioletowy pełny — dla aktywnych/hover elementów */
 }
 
+/* ── BODY ───────────────────────────────────────────────────────────────────── */
+/* Centrujemy zawartość strony pionowo i poziomo */
 body {
 	font-family: Arial, sans-serif;
-	min-height: 100vh;
+	min-height: 100vh;        /* strona zajmuje co najmniej całą wysokość ekranu */
 	position: relative;
 	display: flex;
-	justify-content: center;
-	align-items: center;
+	justify-content: center;  /* centrowanie poziome */
+	align-items: center;      /* centrowanie pionowe */
 	padding: 20px;
 }
 
+/* ── TŁO (TAPETA) ───────────────────────────────────────────────────────────── */
+/* Używamy pseudoelementu ::before zamiast background na body,
+   bo dzięki temu tapeta pozostaje nieruchoma przy scrollowaniu (position: fixed) */
 body::before {
 	content: '';
 	position: fixed;
-	inset: 0;
+	inset: 0;                           /* skrót dla top:0; right:0; bottom:0; left:0 */
 	background-image: url(./wallpaper1.jpg);
-	background-size: cover;
+	background-size: cover;             /* tapeta wypełnia cały obszar */
 	background-position: center;
-	z-index: -1;
-	transform: translateZ(0);
+	z-index: -1;                        /* tapeta pod wszystkimi elementami */
+	transform: translateZ(0);           /* wymusza akcelerację GPU — smoother rendering */
 }
 
+/* ── KARTA FORMULARZA ───────────────────────────────────────────────────────── */
+/* Szklany panel (glassmorphism) z rozmyciem tła */
 .all {
-	background-color: rgba(214, 124, 235, 0.205);
+	background-color: rgba(214, 124, 235, 0.205); /* półprzezroczyste fioletowo-różowe tło */
 	padding: 50px;
 	border-radius: 40px;
-	box-shadow: 0 8px 70px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 8px 70px rgba(0, 0, 0, 0.3);   /* cień nadający głębię */
 	width: 100%;
 	max-width: 450px;
 	min-height: 550px;
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
-	will-change: transform, opacity;
-	animation: slideUp 0.6s ease-out forwards;
+	backdrop-filter: blur(10px);         /* rozmycie tła widocznego przez kartę */
+	-webkit-backdrop-filter: blur(10px); /* wersja dla Safari */
+	will-change: transform, opacity;     /* hint dla przeglądarki — optymalizacja animacji */
+	animation: slideUp 0.6s ease-out forwards; /* animacja wjazdu od dołu */
 }
 
+/* Animacja — karta "wjeżdża" z dołu po załadowaniu strony */
 @keyframes slideUp {
 	from {
 		opacity: 0;
-		transform: translateY(30px);
+		transform: translateY(30px); /* startuje 30px niżej */
 	}
 	to {
 		opacity: 1;
@@ -57,19 +73,22 @@ body::before {
 	}
 }
 
+/* ── POLA FORMULARZA ────────────────────────────────────────────────────────── */
+/* Kontener jednego pola (label + input) */
 .form {
 	margin-top: 10px;
 	margin-bottom: 20px;
-	position: relative;
+	position: relative; /* potrzebne do absolutnego pozycjonowania ikony oka */
 }
 
 label {
-	display: block;
+	display: block;       /* label na osobnej linii nad inputem */
 	margin-bottom: 5px;
 	color: var(--text-color);
 	font-weight: bold;
 }
 
+/* Styl inputów tekstowych i hasła */
 input[type='text'],
 input[type='password'] {
 	width: 100%;
@@ -77,31 +96,34 @@ input[type='password'] {
 	border: 1px solid #cccccc;
 	border-radius: 5px;
 	font-size: 18px;
-	letter-spacing: 2px;
+	letter-spacing: 2px;           /* odstęp między znakami — wygląda lepiej w polach hasła */
 	transition:
 		outline 0.2s ease,
-		box-shadow 0.2s ease;
+		box-shadow 0.2s ease;      /* płynna zmiana przy focusie */
 }
 
+/* Ikona oka do pokazywania/ukrywania hasła */
 .open-eye {
 	display: flex;
 	z-index: 1;
-	position: absolute;
+	position: absolute;   /* pozycja względem .form (które ma position: relative) */
 	right: 15px;
 	top: 65%;
-	transform: translateY(-50%);
+	transform: translateY(-50%); /* wyrównanie pionowe do środka pola */
 	width: 20px;
 	height: 20px;
 	cursor: pointer;
-	user-select: none;
+	user-select: none;    /* zapobiega zaznaczaniu ikony przy podwójnym kliknięciu */
 }
 
+/* Podświetlenie fioletową obwódką gdy pole jest aktywne */
 input:focus {
 	outline-offset: 2px;
 	outline: 3px solid var(--active-color);
 	box-shadow: 0 0 8px rgba(101, 17, 170, 0.4);
 }
 
+/* ── CHECKBOX "ZAPAMIĘTAJ MNIE" ─────────────────────────────────────────────── */
 .remember {
 	margin-bottom: 20px;
 	display: flex;
@@ -111,7 +133,7 @@ input:focus {
 .remember input[type='checkbox'] {
 	outline: none;
 	box-shadow: none;
-	zoom: 1.5;
+	zoom: 1.5;       /* powiększa checkbox — lepiej klikalny na mobile */
 	margin-right: 5px;
 }
 
@@ -122,6 +144,7 @@ input:focus {
 	margin: 0;
 }
 
+/* ── PRZYCISK ───────────────────────────────────────────────────────────────── */
 button {
 	width: 100%;
 	margin-top: 5px;
@@ -137,21 +160,24 @@ button {
 		background-color 0.2s ease,
 		transform 0.2s ease,
 		box-shadow 0.2s ease;
-	position: relative;
-	overflow: hidden;
+	position: relative;  /* potrzebne do efektu fali (::before) */
+	overflow: hidden;    /* ukrywa falę gdy wychodzi poza obramowanie */
 }
 
+/* Efekt hover: przycisk lekko unosi się i ciemnieje */
 button:hover {
 	background-color: var(--active-color);
 	transform: translateY(-2px);
 	box-shadow: 0 5px 15px rgba(92, 77, 177, 0.4);
 }
 
+/* Efekt kliknięcia: przycisk "opada" z powrotem */
 button:active {
 	transform: translateY(0);
 	box-shadow: 0 2px 5px rgba(92, 77, 177, 0.3);
 }
 
+/* Efekt fali (ripple) przy kliknięciu — biały okrąg rozszerzający się od środka */
 button::before {
 	content: '';
 	position: absolute;
@@ -169,16 +195,17 @@ button::before {
 }
 
 button:active::before {
-	width: 400%;
+	width: 400%;   /* rozszerza się do 400% szerokości przycisku */
 	height: 400%;
-	opacity: 0;
+	opacity: 0;    /* zanika podczas rozszerzania */
 }
 
+/* ── TYPOGRAFIA ─────────────────────────────────────────────────────────────── */
 h1 {
 	margin-bottom: 25px;
 	font-size: 38px;
 	text-align: center;
-	font-family: var(--main-font);
+	font-family: var(--main-font); /* czcionka Bungee — tylko dla logo */
 	color: var(--text-color);
 }
 
@@ -201,6 +228,19 @@ a:hover {
 	text-decoration: underline;
 }
 
+/* ── KOMUNIKAT BŁĘDU ────────────────────────────────────────────────────────── */
+/* Czerwony tekst błędu pod formularzem — wypełniany przez JavaScript */
+.form-error {
+    color: #f44336;
+    font-size: 13px;
+    min-height: 18px;  /* rezerwuje miejsce, żeby layout nie "skakał" gdy pojawi się błąd */
+    margin-bottom: 8px;
+}
+
+/* ── RESPONSYWNOŚĆ (MEDIA QUERIES) ──────────────────────────────────────────── */
+/* Dostosowujemy wygląd dla różnych rozmiarów ekranu */
+
+/* Tablet (do 768px szerokości) */
 @media (max-width: 768px) {
 	.all {
 		padding: 40px 35px;
@@ -216,6 +256,7 @@ a:hover {
 	}
 }
 
+/* Mały telefon (do 600px) */
 @media (max-width: 600px) {
 	body {
 		padding: 15px;
@@ -247,6 +288,7 @@ a:hover {
 	}
 }
 
+/* Bardzo mały telefon (do 400px) */
 @media (max-width: 400px) {
 	body {
 		padding: 10px;
@@ -280,6 +322,7 @@ a:hover {
 	}
 }
 
+/* Duży ekran (od 1200px) — powiększamy kartę */
 @media (min-width: 1200px) {
 	.all {
 		max-width: 500px;
@@ -296,6 +339,7 @@ a:hover {
 	}
 }
 
+/* Telefon w poziomie (landscape) z małą wysokością ekranu */
 @media (max-height: 500px) and (orientation: landscape) {
 	body {
 		padding: 10px;
@@ -318,11 +362,4 @@ a:hover {
 	h5 {
 		margin-top: 10px;
 	}
-}
-
-.form-error {
-    color: #f44336;
-    font-size: 13px;
-    min-height: 18px;
-    margin-bottom: 8px;
 }

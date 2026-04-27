@@ -1,35 +1,47 @@
+// Ten plik obsługuje logikę strony logowania (index.html).
+// Odpowiada za: pokazywanie/ukrywanie hasła oraz wysyłanie formularza do serwera.
+
+// Ścieżki do dwóch ikon oka (otwarte = widoczne hasło, zamknięte = ukryte hasło)
 const EYE_OPEN = './visibility_16dp_000000_FILL0_wght400_GRAD0_opsz20.svg';
 const EYE_LOCK = './visibility_lock_16dp_000000_FILL0_wght400_GRAD0_opsz20.svg';
 
-const passwordInput  = document.getElementById('password');
-const togglePassword = document.getElementById('togglePassword');
-const loginError     = document.getElementById('loginError');
+// Pobieramy elementy ze strony po ich ID
+const passwordInput  = document.getElementById('password');       // pole hasła
+const togglePassword = document.getElementById('togglePassword'); // ikona oka
+const loginError     = document.getElementById('loginError');     // miejsce na komunikat błędu
 
+// Obsługa kliknięcia w ikonę oka — przełącza widoczność hasła
 togglePassword.addEventListener('click', () => {
-    const isPassword = passwordInput.type === 'password';
-    passwordInput.type = isPassword ? 'text' : 'password';
-    togglePassword.src = isPassword ? EYE_LOCK : EYE_OPEN;
+    const isPassword = passwordInput.type === 'password'; // czy aktualnie ukryte?
+    passwordInput.type = isPassword ? 'text' : 'password'; // zmień typ pola
+    togglePassword.src = isPassword ? EYE_LOCK : EYE_OPEN; // zmień ikonę
 });
 
+// Obsługa wysłania formularza (kliknięcie "Zaloguj")
 document.querySelector('form').addEventListener('submit', async e => {
-    e.preventDefault();
-    loginError.textContent = '';
+    e.preventDefault(); // blokujemy domyślne zachowanie przeglądarki (przeładowanie strony)
+    loginError.textContent = ''; // czyścimy poprzedni komunikat błędu
 
-    const username = document.getElementById('username').value.trim();
+    // Pobieramy wartości wpisane przez użytkownika
+    const username = document.getElementById('username').value.trim(); // trim() usuwa spacje
     const password = passwordInput.value;
 
-    // URLSearchParams wysyła dane jako application/x-www-form-urlencoded
-    // → PHP może je odczytać przez $_POST
+    // Wysyłamy dane do serwera metodą POST jako application/x-www-form-urlencoded
+    // PHP odczytuje te dane przez $_POST
     const res  = await fetch('./api/login.php', {
         method: 'POST',
         body: new URLSearchParams({ username, password }),
     });
-    const data = await res.json();
+    const data = await res.json(); // parsujemy odpowiedź JSON z serwera
 
     if (res.ok) {
+        // Logowanie udane — zapamiętujemy nazwę użytkownika w sessionStorage
+        // (sessionStorage ginie po zamknięciu zakładki, w przeciwieństwie do localStorage)
         sessionStorage.setItem('username', data.username);
+        // Przechodzimy do głównej strony aplikacji
         window.location.href = './MainPage.html';
     } else {
+        // Serwer zwrócił błąd (np. złe hasło) — wyświetlamy komunikat pod formularzem
         loginError.textContent = data.error;
     }
 });

@@ -1,26 +1,38 @@
+/* Plik CSS dla strony rejestracji (index1.html).
+   Bardzo podobny do style.css (logowanie), ale obsługuje też pole email i drugie pole hasła. */
+
+/* ── RESET ─────────────────────────────────────────────────────────────────── */
+/* Zerujemy domyślne marginesy i paddingi przeglądarki.
+   box-sizing: border-box = padding i border wliczone w szerokość elementu */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* ── ZMIENNE CSS ────────────────────────────────────────────────────────────── */
+/* Kolory i czcionki zdefiniowane raz — łatwa zmiana w jednym miejscu */
 :root {
-    --main-font: 'Bungee', cursive;
-    --text-color: whitesmoke;
-    --purple-color: #6511aaca;
-    --active-color: #6511aa;
+    --main-font:    'Bungee', cursive; /* czcionka logo AXIS */
+    --text-color:   whitesmoke;        /* jasny tekst na ciemnym tle */
+    --purple-color: #6511aaca;         /* fioletowy półprzezroczysty */
+    --active-color: #6511aa;           /* fioletowy pełny — hover/focus */
 }
 
+/* ── BODY ───────────────────────────────────────────────────────────────────── */
+/* Centrujemy kartę rejestracji na środku ekranu */
 body {
     font-family: Arial, sans-serif;
     min-height: 100vh;
     position: relative;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: center; /* poziomo */
+    align-items: center;     /* pionowo */
     padding: 20px;
 }
 
+/* ── TŁO (TAPETA) ───────────────────────────────────────────────────────────── */
+/* position: fixed = tapeta nie scrolluje się razem ze stroną */
 body::before {
     content: '';
     position: fixed;
@@ -28,10 +40,12 @@ body::before {
     background-image: url(./wallpaper1.jpg);
     background-size: cover;
     background-position: center;
-    z-index: -1;
+    z-index: -1;            /* tapeta pod wszystkimi elementami */
     transform: translateZ(0);
 }
 
+/* ── KARTA FORMULARZA (GLASSMORPHISM) ───────────────────────────────────────── */
+/* Szklany efekt: półprzezroczyste tło + rozmycie tego co jest za kartą */
 .all {
     background-color: rgba(214, 124, 235, 0.205);
     padding: 50px;
@@ -39,13 +53,14 @@ body::before {
     box-shadow: 0 8px 70px rgba(0, 0, 0, 0.3);
     width: 100%;
     max-width: 450px;
-    min-height: 650px;
-    backdrop-filter: blur(10px);
+    min-height: 650px;                 /* wyższy niż login — jest więcej pól */
+    backdrop-filter: blur(10px);       /* rozmycie tła za kartą */
     -webkit-backdrop-filter: blur(10px);
     will-change: transform, opacity;
-    animation: slideUp 0.6s ease-out forwards;
+    animation: slideUp 0.6s ease-out forwards; /* animacja wjazdu od dołu */
 }
 
+/* Animacja wjazdu karty */
 @keyframes slideUp {
     from {
         opacity: 0;
@@ -57,10 +72,12 @@ body::before {
     }
 }
 
+/* ── POLA FORMULARZA ────────────────────────────────────────────────────────── */
+/* Kontener jednego pola (label + input) */
 .form {
     margin-top: 10px;
     margin-bottom: 20px;
-    position: relative; 
+    position: relative; /* potrzebne do absolutnego pozycjonowania ikony oka */
 }
 
 label {
@@ -68,9 +85,10 @@ label {
     margin-bottom: 5px;
     color: var(--text-color);
     font-weight: bold;
-    font-family: Arial,sans-serif;
+    font-family: Arial, sans-serif;
 }
 
+/* Styl inputów tekstowych, e-mail i hasła */
 input[type='text'],
 input[type='email'],
 input[type='password'] {
@@ -83,22 +101,25 @@ input[type='password'] {
     transition: outline 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* E-mail nie potrzebuje zwiększonego letter-spacing (normalny tekst, nie hasło) */
 input[type='email'] {
     letter-spacing: normal;
 }
 
+/* Fioletowe podświetlenie gdy pole jest aktywne */
 input:focus {
     outline-offset: 2px;
     outline: 3px solid var(--active-color);
     box-shadow: 0 0 8px rgba(101, 17, 170, 0.4);
 }
 
+/* Ikony oka do pokazywania/ukrywania hasła (są dwie: dla hasła i potwierdzenia) */
 .open-eye,
 .open-eye-confirm {
-    position: absolute;
+    position: absolute;  /* pozycja względem .form */
     right: 15px;
     top: 65%;
-    transform: translateY(-50%);
+    transform: translateY(-50%); /* wyrównanie pionowe */
     width: 20px;
     height: 20px;
     cursor: pointer;
@@ -106,6 +127,7 @@ input:focus {
     z-index: 1;
 }
 
+/* ── CHECKBOX (AKCEPTACJA REGULAMINU) ───────────────────────────────────────── */
 .remember {
     margin-bottom: 20px;
     display: flex;
@@ -115,7 +137,7 @@ input:focus {
 .remember input[type='checkbox'] {
     outline: none;
     box-shadow: none;
-    zoom: 1.5;
+    zoom: 1.5;        /* powiększony checkbox — łatwiejszy do kliknięcia */
     margin-right: 5px;
 }
 
@@ -126,6 +148,7 @@ input:focus {
     margin: 0;
 }
 
+/* ── PRZYCISK ───────────────────────────────────────────────────────────────── */
 button {
     width: 100%;
     margin-top: 5px;
@@ -142,17 +165,20 @@ button {
     overflow: hidden;
 }
 
+/* Efekt hover — unosi się i ciemnieje */
 button:hover {
     background-color: var(--active-color);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(92, 77, 177, 0.4);
 }
 
+/* Efekt kliknięcia — opada z powrotem */
 button:active {
     transform: translateY(0);
     box-shadow: 0 2px 5px rgba(92, 77, 177, 0.3);
 }
 
+/* Efekt fali (ripple) — biały okrąg rozchodzący się od miejsca kliknięcia */
 button::before {
     content: '';
     position: absolute;
@@ -172,6 +198,7 @@ button:active::before {
     opacity: 0;
 }
 
+/* ── TYPOGRAFIA ─────────────────────────────────────────────────────────────── */
 h1 {
     font-family: var(--main-font);
     margin-bottom: 25px;
@@ -185,7 +212,7 @@ h5 {
     text-align: center;
     margin-top: 15px;
     font-size: 16px;
-    font-family: Arial,sans-serif;
+    font-family: Arial, sans-serif;
 }
 
 a {
@@ -200,6 +227,18 @@ a:hover {
     text-decoration: underline;
 }
 
+/* ── KOMUNIKAT BŁĘDU ────────────────────────────────────────────────────────── */
+/* Czerwony tekst błędu (np. "Hasła nie są identyczne") */
+.form-error {
+    color: #f44336;
+    font-size: 13px;
+    min-height: 18px; /* rezerwuje miejsce, żeby layout nie "skakał" */
+    margin-bottom: 8px;
+}
+
+/* ── RESPONSYWNOŚĆ ───────────────────────────────────────────────────────────── */
+
+/* Tablet */
 @media (max-width: 768px) {
     .all {
         padding: 40px 35px;
@@ -209,6 +248,7 @@ a:hover {
     button { padding: 18px; font-size: 15px; }
 }
 
+/* Mały telefon */
 @media (max-width: 600px) {
     body { padding: 15px; }
     .all {
@@ -225,6 +265,7 @@ a:hover {
     h5 { font-size: 13px; margin-top: 12px; }
 }
 
+/* Duży ekran */
 @media (min-width: 1200px) {
     .all {
         max-width: 500px;
@@ -235,6 +276,7 @@ a:hover {
     button { padding: 24px; font-size: 17px; }
 }
 
+/* Telefon w poziomie */
 @media (max-height: 500px) and (orientation: landscape) {
     body { padding: 10px; }
     .all { padding: 15px 30px; min-height: auto; }
@@ -242,10 +284,4 @@ a:hover {
     .form { margin-bottom: 10px; }
     button { padding: 10px; margin-top: 0; }
     h5 { margin-top: 8px; }
-}
-.form-error {
-    color: #f44336;
-    font-size: 13px;
-    min-height: 18px;
-    margin-bottom: 8px;
 }
