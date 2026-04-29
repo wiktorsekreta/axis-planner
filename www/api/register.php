@@ -19,7 +19,7 @@ try {
 // trim() usuwa przypadkowe spacje z początku i końca wpisanego tekstu
 $username = trim($_POST['username'] ?? '');  // nazwa użytkownika
 $email    = trim($_POST['email']   ?? '');  // adres e-mail
-$password =      $_POST['password'] ?? ''; // hasło (bez trim — spacje mogą być celowe)
+$password = $_POST['password'] ?? ''; // hasło (bez trim — spacje mogą być celowe)
 
 // Sprawdzamy, czy wszystkie pola są wypełnione
 if (!$username || !$email || !$password) {

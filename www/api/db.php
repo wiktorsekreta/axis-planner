@@ -13,7 +13,7 @@ $name = $_ENV['DB_NAME'] ?? getenv('DB_NAME') ?: 'axis';       // nazwa bazy dan
 // charset=utf8mb4 zapewnia obsługę polskich znaków i emoji.
 $pdo = new PDO("mysql:host=$host;dbname=$name;charset=utf8mb4", $user, $pass, [
     // ERRMODE_EXCEPTION — jeśli coś pójdzie nie tak z bazą, PHP rzuci wyjątek (zamiast cicho zignorować błąd)
-    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     // FETCH_ASSOC — wyniki zapytań zwracane jako tablice z nazwami kolumn (np. $row['Email'])
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);

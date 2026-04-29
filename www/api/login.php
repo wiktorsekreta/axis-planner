@@ -21,7 +21,7 @@ try {
 // Pobieramy dane z formularza logowania wysłanego metodą POST
 // trim() usuwa zbędne spacje z początku i końca
 $username = trim($_POST['username'] ?? '');  // login lub e-mail
-$password =      $_POST['password'] ?? '';  // hasło (nie trimmujemy — spacje mogą być celowe)
+$password = $_POST['password'] ?? '';  // hasło (nie trimmujemy — spacje mogą być celowe)
 
 // Sprawdzamy, czy oba pola zostały wypełnione
 if (!$username || !$password) {
