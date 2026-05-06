@@ -9,7 +9,7 @@ const loginError     = document.getElementById('loginError');
 const usernameInput  = document.getElementById('username');
 const rememberCheck  = document.getElementById('remember');
 
-// Ciasteczko 
+// Ciasteczko — pomocnicze
 function getCookie(name) {
 	const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
 	return match ? decodeURIComponent(match[1]) : null;
@@ -46,7 +46,7 @@ document.querySelector('form').addEventListener('submit', async e => {
 
 	if (res.ok) {
 		sessionStorage.setItem('username', data.username);
-		window.location.href = './MainPage.html';
+		window.location.href = './mainPage.html';
 	} else {
 		loginError.textContent = data.error;
 	}

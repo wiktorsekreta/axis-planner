@@ -1,165 +1,109 @@
 <!DOCTYPE html>
-<!-- Główna strona aplikacji AXIS — planer zadań z widokami: dzień / tydzień / miesiąc -->
 <html lang="pl">
 
 <head>
-    <!-- Kodowanie znaków — obsługa polskich liter -->
     <meta charset="UTF-8">
-    <!-- viewport — poprawne wyświetlanie na telefonach i tabletach -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AXIS - Planner</title>
-
-    <!-- Dwie czcionki: "Bungee" (logo) i "Inter" (reszta tekstu) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;600&display=swap">
-
-    <!-- Plik ze stylami CSS dla tej strony -->
-    <link rel="stylesheet" href="./mainPageStyle.css">
+    <link rel="stylesheet" href="./mainPage.css">
 </head>
 
 <body>
-    <!-- Główny kontener całej aplikacji -->
     <div class="planner-container">
-
-
-        <!-- ── NAGŁÓWEK ─────────────────────────────────────────────────────── -->
-        <!-- Pasek u góry z logo, nazwą użytkownika i przyciskiem wylogowania -->
         <div class="header">
             <h1>AXIS</h1>
             <div class="user-info">
-                <!-- Nazwa użytkownika — wstawiana przez JavaScript po sprawdzeniu sesji -->
                 <span class="username">Użytkownik</span>
-                <!-- Kliknięcie przekierowuje do logout.php, który niszczy sesję -->
                 <a href="./api/logout.php">
                     <button class="btn logout-btn">Wyloguj</button>
                 </a>
             </div>
         </div>
 
-
-        <!-- ── PRZEŁĄCZNIK WIDOKU ──────────────────────────────────────────── -->
-        <!-- Trzy przyciski: Dzień / Tydzień / Miesiąc -->
-        <!-- data-view= mówi JavaScript, który widok aktywować po kliknięciu -->
         <div class="view-toggle">
             <button class="btn toggle-btn active" data-view="day">Dzień</button>
             <button class="btn toggle-btn" data-view="week">Tydzień</button>
             <button class="btn toggle-btn" data-view="month">Miesiąc</button>
         </div>
 
-
-        <!-- ── GŁÓWNY BOX KALENDARZA ──────────────────────────────────────── -->
         <div class="calendar-box">
-
-            <!-- Pasek nawigacji: strzałka wstecz, tytuł daty, strzałka do przodu -->
             <div class="calendar-header">
                 <button class="nav-btn" id="prev">‹</button>
                 <h2 class="date-title" id="dateTitle">–</h2>
                 <button class="nav-btn" id="next">›</button>
             </div>
 
-            <!-- ── WIDOK MIESIĄCA ──────────────────────────────────────────── -->
-            <!-- Ukryty domyślnie (klasa "hidden"); JavaScript go pokazuje gdy aktywny -->
             <div id="monthView" class="month-view hidden">
-                <!-- Nagłówki kolumn kalendarza: Pn Wt Śr Cz Pt So Nd -->
                 <div class="month-grid-header">
                     <span>Pn</span><span>Wt</span><span>Śr</span>
                     <span>Cz</span><span>Pt</span><span>So</span><span>Nd</span>
                 </div>
-                <!-- Siatka dni — komórki generowane dynamicznie przez JavaScript -->
                 <div class="month-grid" id="monthGrid"></div>
             </div>
 
-
-            <!-- ── WIDOK TYGODNIA ──────────────────────────────────────────── -->
-            <!-- Ukryty domyślnie; JavaScript generuje 7 kolumn (Pn–Nd) -->
             <div id="weekView" class="week-view hidden">
                 <div class="week-grid" id="weekGrid"></div>
             </div>
 
-
-            <!-- ── WIDOK DNIA ──────────────────────────────────────────────── -->
-            <!-- Widoczny domyślnie (brak klasy "hidden") -->
             <div id="dayView" class="day-view">
-
-                <!-- Sekcja dodawania nowego zadania -->
                 <div class="add-task-section">
                     <h3>Dodaj zadanie</h3>
-                    <!-- Tytuł i godzina w jednym wierszu -->
                     <div class="form-row">
                         <div class="form-group">
                             <label for="task-title">Tytuł</label>
-                            <!-- maxlength="80" — limit znaków w tytule -->
                             <input type="text" id="task-title" placeholder="Tytuł zadania" maxlength="80">
                         </div>
                         <div class="form-group form-group--small">
                             <label for="task-time">Godzina</label>
-                            <!-- type="time" — przeglądarka pokazuje wygodny selektor czasu -->
                             <input type="time" id="task-time">
                         </div>
                     </div>
-                    <!-- Opcjonalny opis zadania -->
                     <div class="form-group">
                         <label for="task-desc">Opis (opcjonalnie)</label>
                         <textarea id="task-desc" placeholder="Dodaj opis..." rows="2"></textarea>
                     </div>
-
-                    <!-- Wybór kategorii — "chipsy" generowane przez JavaScript na podstawie listy kategorii -->
                     <div class="form-group">
                         <label>Kategorie</label>
                         <div class="cat-chips-picker" id="catChipsPicker">
-                            <!-- Tekst zastępczy — znika gdy pojawią się kategorie -->
                             <span class="cat-no-cats" id="catNoCats">Brak kategorii — dodaj je poniżej</span>
                         </div>
                     </div>
-                    <!-- Przycisk dodający zadanie — obsługiwany przez JavaScript (addTask) -->
                     <button class="btn add-btn" id="addTaskBtn">+ Dodaj zadanie</button>
                 </div>
 
-
-                <!-- Sekcja listy zadań na wybrany dzień -->
                 <div class="tasks-section">
                     <div class="tasks-header">
                         <h3>Zadania</h3>
-                        <!-- Licznik zadań — aktualizowany przez JavaScript -->
                         <span class="task-count" id="taskCount">0</span>
                     </div>
-                    <!-- Lista zadań — elementy generowane przez JavaScript -->
                     <div id="taskList" class="task-list">
-                        <!-- Komunikat "brak zadań" — widoczny gdy lista jest pusta -->
                         <div class="empty-state" id="emptyState">
                             <span>Brak zadań na ten dzień</span>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
 
-
-        <!-- ── BOX KATEGORII ──────────────────────────────────────────────── -->
-        <!-- Panel zarządzania kategoriami (dodawanie i usuwanie) -->
         <div class="categories-box">
             <div class="categories-box-header">
                 <h3>Kategorie</h3>
-                <!-- Licznik kategorii — aktualizowany przez JavaScript -->
                 <span class="cat-count-badge" id="catCount">0</span>
             </div>
-            <!-- Wiersz do dodania nowej kategorii -->
             <div class="cat-add-row">
                 <input type="text" id="cat-name" placeholder="Nazwa nowej kategorii...">
                 <button class="btn cat-add-btn" id="addCatBtn">+ Dodaj</button>
             </div>
-            <!-- Lista istniejących kategorii — generowana przez JavaScript -->
             <div class="cat-list" id="catList">
                 <div class="cat-empty" id="catEmpty">Brak kategorii</div>
             </div>
         </div>
-
     </div>
 
-    <!-- Główny skrypt aplikacji; defer = czeka aż cała strona się załaduje -->
     <script src="./mainPageJS.js" defer></script>
 </body>
 

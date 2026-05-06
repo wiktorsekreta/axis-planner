@@ -1,78 +1,73 @@
-/* Plik CSS dla głównej strony aplikacji (MainPage.html) — planer zadań. */
-
-/* ── RESET ─────────────────────────────────────────────────────────────────── */
 * {
 	margin: 0;
 	padding: 0;
-	box-sizing: border-box; /* padding i border wliczone w szerokość elementu */
+	box-sizing: border-box;
 }
 
-/* ── ZMIENNE CSS ────────────────────────────────────────────────────────────── */
-/* Centralne miejsce na kolory i wartości — zmiana tutaj działa w całym pliku */
 :root {
-	--main-font:   'Bungee', cursive;           /* czcionka logo AXIS */
-	--body-font:   'Inter', sans-serif;          /* czcionka reszty interfejsu */
-	--text-color:  whitesmoke;                   /* jasny tekst */
-	--purple-color: rgba(101, 17, 170, 0.8);     /* fioletowy z przezroczystością */
-	--active-color: #6511aa;                     /* pełny fioletowy — aktywne elementy */
-	--bg-card:  rgba(80, 20, 120, 0.75);         /* tło głównej karty */
-	--bg-inner: rgba(255, 255, 255, 0.06);       /* tło wewnętrznych sekcji (bardzo ciemne) */
-	--bg-hover: rgba(255, 255, 255, 0.12);       /* tło przy najechaniu */
-	--border:   rgba(255, 255, 255, 0.12);       /* kolor obramowań */
-	--green:    #4caf50;                         /* zielony — wykonane zadanie */
-	--radius:   16px;                            /* domyślne zaokrąglenie narożników */
-	--transition: 0.2s ease;                     /* czas animacji przejść */
+	--main-font: 'Bungee', cursive;
+	--body-font: 'Inter', sans-serif;
+	--text-color: whitesmoke;
+	--purple-color: rgba(101, 17, 170, 0.8);
+	--active-color: #6511aa;
+	--bg-card: rgba(80, 20, 120, 0.75);
+	--bg-inner: rgba(255, 255, 255, 0.06);
+	--bg-hover: rgba(255, 255, 255, 0.12);
+	--border: rgba(255, 255, 255, 0.12);
+	--green: #4caf50;
+	--radius: 16px;
+	--transition: 0.2s ease;
 }
 
-/* ── BODY ───────────────────────────────────────────────────────────────────── */
-/* align-items: flex-start — karta wyrównana do góry (nie centrowana pionowo jak na loginPage) */
 body {
 	font-family: var(--body-font);
 	min-height: 100vh;
 	position: relative;
 	display: flex;
 	justify-content: center;
-	align-items: flex-start; /* karta zaczyna od góry strony, nie centrum */
+	align-items: flex-start;
 	padding: 20px;
 }
 
-/* ── TŁO (TAPETA) ───────────────────────────────────────────────────────────── */
 body::before {
 	content: '';
-	position: fixed;   /* nieruchome tło przy scrollowaniu */
+	position: fixed;
 	inset: 0;
 	background-image: url(./wallpaper1.jpg);
 	background-size: cover;
 	background-position: center;
 	z-index: -1;
-	transform: translateZ(0); /* akceleracja GPU */
+	transform: translateZ(0);
 }
 
-/* ── GŁÓWNY KONTENER ────────────────────────────────────────────────────────── */
-/* Karta zawierająca cały planer */
 .planner-container {
 	background-color: var(--bg-card);
 	padding: 40px;
 	border-radius: 40px;
 	box-shadow: 0 8px 70px rgba(0, 0, 0, 0.5);
 	width: 100%;
-	max-width: 1200px;             /* szerszy niż login — tu jest więcej treści */
+	max-width: 1200px;
 	animation: slideUp 0.5s ease-out forwards;
-	contain: layout style;         /* optymalizacja renderowania przeglądarki */
+	contain: layout style;
 }
 
 @keyframes slideUp {
-	from { opacity: 0; transform: translateY(30px); }
-	to   { opacity: 1; transform: translateY(0); }
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
-/* ── NAGŁÓWEK (logo + nazwa użytkownika + wyloguj) ──────────────────────────── */
 .header {
 	display: flex;
-	justify-content: space-between; /* logo po lewej, user-info po prawej */
+	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 28px;
-	flex-wrap: wrap; /* na małych ekranach przechodzi do nowej linii */
+	flex-wrap: wrap;
 	gap: 16px;
 }
 
@@ -94,8 +89,6 @@ body::before {
 	font-size: 15px;
 }
 
-/* ── PRZYCISKI (OGÓLNY STYL .btn) ──────────────────────────────────────────── */
-/* Klasa .btn stosowana do większości przycisków w aplikacji */
 .btn {
 	padding: 12px 22px;
 	background-color: var(--purple-color);
@@ -111,25 +104,26 @@ body::before {
 		transform var(--transition),
 		box-shadow var(--transition);
 	position: relative;
-	overflow: hidden; /* obcina efekt fali */
+	overflow: hidden;
 }
 
 .btn:hover {
 	background-color: var(--active-color);
-	transform: translateY(-2px); /* unosi się */
+	transform: translateY(-2px);
 	box-shadow: 0 5px 15px rgba(92, 77, 177, 0.4);
 }
 
 .btn:active {
-	transform: translateY(0); /* opada przy kliknięciu */
+	transform: translateY(0);
 }
 
-/* Efekt fali (ripple) — biały okrąg rozchodzi się przy kliknięciu */
 .btn::before {
 	content: '';
 	position: absolute;
-	top: 50%; left: 50%;
-	width: 0; height: 0;
+	top: 50%;
+	left: 50%;
+	width: 0;
+	height: 0;
 	border-radius: 50%;
 	background: rgba(255, 255, 255, 0.25);
 	transform: translate(-50%, -50%);
@@ -140,17 +134,16 @@ body::before {
 }
 
 .btn:active::before {
-	width: 400%; height: 400%;
+	width: 400%;
+	height: 400%;
 	opacity: 0;
 }
 
-/* Mniejszy wariant przycisku — użyty dla "Wyloguj" */
 .logout-btn {
 	padding: 10px 20px;
 	font-size: 14px;
 }
 
-/* ── PRZEŁĄCZNIK WIDOKÓW (Dzień / Tydzień / Miesiąc) ──────────────────────── */
 .view-toggle {
 	display: flex;
 	gap: 12px;
@@ -162,7 +155,7 @@ body::before {
 	flex: 0;
 	min-width: 100px;
 	padding: 10px 20px;
-	background-color: rgba(101, 17, 170, 0.4); /* jaśniejszy fiolet — nieaktywny */
+	background-color: rgba(101, 17, 170, 0.4);
 	border-radius: var(--radius);
 	font-size: 14px;
 	transition:
@@ -171,13 +164,11 @@ body::before {
 		box-shadow var(--transition);
 }
 
-/* Aktywny przycisk widoku ma pełny kolor i cień */
 .toggle-btn.active {
 	background-color: var(--active-color);
 	box-shadow: 0 4px 14px rgba(101, 17, 170, 0.5);
 }
 
-/* ── GŁÓWNY BOX KALENDARZA ──────────────────────────────────────────────────── */
 .calendar-box {
 	background-color: var(--bg-inner);
 	padding: 28px;
@@ -185,7 +176,6 @@ body::before {
 	border: 1px solid var(--border);
 }
 
-/* Pasek nawigacji (strzałka ‹ | data | strzałka ›) */
 .calendar-header {
 	display: flex;
 	justify-content: space-between;
@@ -200,10 +190,9 @@ body::before {
 	font-family: var(--body-font);
 	font-weight: 600;
 	text-align: center;
-	flex: 1; /* zajmuje całe dostępne miejsce między strzałkami */
+	flex: 1;
 }
 
-/* Przyciski nawigacyjne (‹ i ›) */
 .nav-btn {
 	background-color: var(--purple-color);
 	color: var(--text-color);
@@ -219,26 +208,23 @@ body::before {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	flex-shrink: 0; /* nie zmniejsza się gdy mało miejsca */
+	flex-shrink: 0;
 }
 
 .nav-btn:hover {
 	background-color: var(--active-color);
-	transform: scale(1.1); /* lekkie powiększenie */
+	transform: scale(1.1);
 }
 
-/* ── WIDOK MIESIĄCA ─────────────────────────────────────────────────────────── */
-
-/* Nagłówki kolumn: Pn Wt Śr Cz Pt So Nd */
 .month-grid-header {
 	display: grid;
-	grid-template-columns: repeat(7, 1fr); /* 7 równych kolumn */
+	grid-template-columns: repeat(7, 1fr);
 	gap: 4px;
 	margin-bottom: 6px;
 }
 
 .month-grid-header span {
-	color: rgba(255, 255, 255, 0.5); /* wyszarzone napisy */
+	color: rgba(255, 255, 255, 0.5);
 	font-size: 12px;
 	font-weight: 600;
 	text-align: center;
@@ -247,14 +233,12 @@ body::before {
 	letter-spacing: 0.05em;
 }
 
-/* Siatka dni — 7 kolumn */
 .month-grid {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
 	gap: 4px;
 }
 
-/* Pojedyncza komórka dnia w widoku miesiąca */
 .month-day {
 	background-color: var(--bg-inner);
 	border-radius: 10px;
@@ -275,23 +259,19 @@ body::before {
 	border-color: var(--border);
 }
 
-/* Dzisiaj — fioletowe obramowanie */
 .month-day.today {
 	border-color: var(--active-color);
 }
 
-/* Dni z innego miesiąca — wyszarzone */
 .month-day.other-month .day-num {
 	opacity: 0.3;
 }
 
-/* Wybrany dzień — podświetlony */
 .month-day.selected {
 	background-color: rgba(101, 17, 170, 0.35);
 	border-color: var(--active-color);
 }
 
-/* Numer dnia */
 .day-num {
 	font-size: 13px;
 	font-weight: 600;
@@ -299,7 +279,6 @@ body::before {
 	line-height: 1;
 }
 
-/* Dzisiaj — numer dnia w fioletowym kółku */
 .month-day.today .day-num {
 	background-color: var(--active-color);
 	color: #fff;
@@ -312,29 +291,24 @@ body::before {
 	font-size: 12px;
 }
 
-/* Miniaturka zadania w widoku miesiąca */
 .month-task-dot {
 	font-size: 10px;
 	color: rgba(255, 255, 255, 0.75);
 	white-space: nowrap;
 	overflow: hidden;
-	text-overflow: ellipsis; /* "..." gdy tekst nie mieści się */
+	text-overflow: ellipsis;
 	background: rgba(101, 17, 170, 0.5);
 	border-radius: 4px;
 	padding: 1px 4px;
 	line-height: 1.4;
 }
 
-/* ── WIDOK TYGODNIA ─────────────────────────────────────────────────────────── */
-
-/* 7 kolumn obok siebie */
 .week-grid {
 	display: grid;
 	grid-template-columns: repeat(7, 1fr);
 	gap: 8px;
 }
 
-/* Pojedyncza kolumna dnia w widoku tygodnia */
 .week-day-col {
 	background-color: var(--bg-inner);
 	border-radius: 14px;
@@ -358,7 +332,6 @@ body::before {
 	border-color: var(--active-color);
 }
 
-/* Skrócona nazwa dnia (np. "Pn") */
 .week-day-name {
 	font-size: 11px;
 	font-weight: 600;
@@ -369,7 +342,6 @@ body::before {
 	text-align: center;
 }
 
-/* Numer dnia */
 .week-day-num {
 	font-size: 18px;
 	font-weight: 700;
@@ -378,7 +350,6 @@ body::before {
 	margin-bottom: 8px;
 }
 
-/* Dzisiaj — numer w fioletowym kółku */
 .week-day-col.today .week-day-num {
 	background-color: var(--active-color);
 	color: #fff;
@@ -392,7 +363,6 @@ body::before {
 	margin: 0 auto 8px;
 }
 
-/* Miniaturka zadania w widoku tygodnia */
 .week-task-item {
 	font-size: 10px;
 	color: rgba(255, 255, 255, 0.8);
@@ -405,12 +375,10 @@ body::before {
 	text-overflow: ellipsis;
 }
 
-/* Klasa ukrywająca element — używana przez JavaScript do przełączania widoków */
 .hidden {
-	display: none !important; /* !important zapobiega nadpisaniu przez inne style */
+	display: none !important;
 }
 
-/* ── SEKCJA DODAWANIA ZADANIA ───────────────────────────────────────────────── */
 .add-task-section {
 	background-color: var(--bg-inner);
 	padding: 22px;
@@ -428,7 +396,6 @@ body::before {
 	letter-spacing: 0.06em;
 }
 
-/* Wiersz z tytułem i godziną obok siebie */
 .form-row {
 	display: flex;
 	gap: 14px;
@@ -437,10 +404,9 @@ body::before {
 
 .form-group {
 	margin-bottom: 14px;
-	flex: 1; /* zajmuje całe dostępne miejsce */
+	flex: 1;
 }
 
-/* Małe pole (godzina) — stała szerokość 130px */
 .form-group--small {
 	flex: 0 0 130px;
 }
@@ -455,7 +421,6 @@ label {
 	letter-spacing: 0.05em;
 }
 
-/* Styl pól tekstowych w formularzu — białe tło, ciemny tekst */
 input[type='text'],
 input[type='time'],
 textarea {
@@ -465,28 +430,25 @@ textarea {
 	border-radius: 10px;
 	font-size: 15px;
 	font-family: var(--body-font);
-	background-color: rgba(255, 255, 255, 0.92); /* prawie białe tło */
-	color: #1a1a2e;                               /* ciemny tekst — kontrast */
+	background-color: rgba(255, 255, 255, 0.92);
+	color: #1a1a2e;
 	transition:
 		outline 0.15s ease,
 		box-shadow 0.15s ease;
 }
 
-/* Textarea (opis) można skalować pionowo przez przeciąganie */
 textarea {
 	resize: vertical;
 	min-height: 60px;
 }
 
-/* Fioletowe podświetlenie aktywnego pola */
 input:focus,
 textarea:focus {
 	outline: 2px solid var(--active-color);
 	outline-offset: 1px;
-	box-shadow: 0 0 0 4px rgba(101, 17, 170, 0.2); /* delikatna poświata */
+	box-shadow: 0 0 0 4px rgba(101, 17, 170, 0.2);
 }
 
-/* Przycisk "+ Dodaj zadanie" */
 .add-btn {
 	width: 100%;
 	padding: 13px;
@@ -495,8 +457,6 @@ textarea:focus {
 	background-color: var(--active-color);
 	margin-top: 4px;
 }
-
-/* ── SEKCJA LISTY ZADAŃ ─────────────────────────────────────────────────────── */
 
 .tasks-header {
 	display: flex;
@@ -513,7 +473,6 @@ textarea:focus {
 	letter-spacing: 0.06em;
 }
 
-/* Fioletowa plakietka z liczbą zadań */
 .task-count {
 	background-color: var(--active-color);
 	color: #fff;
@@ -527,11 +486,10 @@ textarea:focus {
 
 .task-list {
 	display: flex;
-	flex-direction: column; /* zadania jedno pod drugim */
+	flex-direction: column;
 	gap: 10px;
 }
 
-/* Komunikat gdy brak zadań */
 .empty-state {
 	text-align: center;
 	color: rgba(255, 255, 255, 0.35);
@@ -539,7 +497,6 @@ textarea:focus {
 	padding: 40px 0;
 }
 
-/* ── KARTA POJEDYNCZEGO ZADANIA ─────────────────────────────────────────────── */
 .task-item {
 	background-color: var(--bg-inner);
 	padding: 16px 18px;
@@ -547,27 +504,31 @@ textarea:focus {
 	display: flex;
 	gap: 14px;
 	align-items: flex-start;
-	border-left: 3px solid var(--active-color); /* fioletowy pasek po lewej */
+	border-left: 3px solid var(--active-color);
 	border-top: 1px solid var(--border);
 	transition:
 		background-color var(--transition),
 		transform var(--transition);
 	contain: layout style;
-	animation: taskIn 0.25s ease-out; /* animacja wjazdu gdy zadanie pojawia się na liście */
+	animation: taskIn 0.25s ease-out;
 }
 
 @keyframes taskIn {
-	from { opacity: 0; transform: translateY(-8px); }
-	to   { opacity: 1; transform: translateY(0); }
+	from {
+		opacity: 0;
+		transform: translateY(-8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
-/* Karta zadania lekko przesuwa się w prawo przy najechaniu */
 .task-item:hover {
 	background-color: var(--bg-hover);
 	transform: translateX(3px);
 }
 
-/* Wykonane zadanie — wyszarzone, zielony pasek, przekreślony tekst */
 .task-item.completed {
 	opacity: 0.5;
 	border-left-color: var(--green);
@@ -578,7 +539,6 @@ textarea:focus {
 	text-decoration: line-through;
 }
 
-/* Fioletowa plakietka z godziną zadania */
 .task-time-badge {
 	background: rgba(101, 17, 170, 0.5);
 	color: var(--text-color);
@@ -591,10 +551,9 @@ textarea:focus {
 	margin-top: 1px;
 }
 
-/* Główna treść zadania (tytuł + opis + tagi kategorii) */
 .task-body {
 	flex: 1;
-	min-width: 0; /* zapobiega wychodzeniu tekstu poza kontener */
+	min-width: 0;
 }
 
 .task-title {
@@ -602,7 +561,7 @@ textarea:focus {
 	font-size: 15px;
 	font-weight: 600;
 	margin-bottom: 3px;
-	word-break: break-word; /* długie słowa zawijają się */
+	word-break: break-word;
 }
 
 .task-desc {
@@ -612,7 +571,6 @@ textarea:focus {
 	word-break: break-word;
 }
 
-/* Przyciski ✓ i ✕ po prawej stronie karty */
 .task-actions {
 	display: flex;
 	gap: 6px;
@@ -620,7 +578,6 @@ textarea:focus {
 	margin-top: 1px;
 }
 
-/* Wspólne style dla przycisków ✓ i ✕ */
 .task-check,
 .task-delete {
 	width: 32px;
@@ -639,7 +596,6 @@ textarea:focus {
 	overflow: hidden;
 }
 
-/* Przycisk ✓ — zielony */
 .task-check {
 	background-color: rgba(76, 175, 80, 0.2);
 	color: var(--green);
@@ -650,7 +606,6 @@ textarea:focus {
 	transform: scale(1.1);
 }
 
-/* Przycisk ✕ — czerwony */
 .task-delete {
 	background-color: rgba(244, 67, 54, 0.2);
 	color: #f44336;
@@ -661,14 +616,10 @@ textarea:focus {
 	transform: scale(1.1);
 }
 
-/* Linki (np. w nagłówku przycisk Wyloguj jest owinięty w <a>) */
 a {
 	text-decoration: none;
 }
 
-/* ── SEKCJA KATEGORII ───────────────────────────────────────────────────────── */
-
-/* Dolny panel zarządzania kategoriami */
 .categories-box {
 	background-color: var(--bg-inner);
 	border: 1px solid var(--border);
@@ -692,7 +643,6 @@ a {
 	letter-spacing: 0.06em;
 }
 
-/* Fioletowa plakietka z liczbą kategorii */
 .cat-count-badge {
 	background-color: var(--active-color);
 	color: #fff;
@@ -704,7 +654,6 @@ a {
 	text-align: center;
 }
 
-/* Wiersz do dodawania nowej kategorii (pole + przycisk obok siebie) */
 .cat-add-row {
 	display: flex;
 	gap: 12px;
@@ -712,23 +661,21 @@ a {
 }
 
 .cat-add-row input[type='text'] {
-	flex: 1; /* pole zajmuje całe dostępne miejsce */
+	flex: 1;
 }
 
 .cat-add-btn {
 	padding: 11px 20px;
 	font-size: 14px;
-	flex-shrink: 0; /* przycisk nie zwęża się */
+	flex-shrink: 0;
 }
 
-/* Lista kategorii — owijają się do nowej linii gdy się nie mieszczą */
 .cat-list {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
 }
 
-/* Tekst "Brak kategorii" */
 .cat-empty {
 	color: rgba(255, 255, 255, 0.35);
 	font-size: 14px;
@@ -736,7 +683,6 @@ a {
 	width: 100%;
 }
 
-/* Karta pojedynczej kategorii (nazwa + przycisk ✕) */
 .cat-item {
 	display: flex;
 	align-items: center;
@@ -745,7 +691,7 @@ a {
 	border: 1px solid rgba(255, 255, 255, 0.15);
 	border-radius: 20px;
 	padding: 6px 10px 6px 14px;
-	animation: taskIn 0.2s ease-out; /* wjeżdża gdy dodana */
+	animation: taskIn 0.2s ease-out;
 }
 
 .cat-name-text {
@@ -754,7 +700,6 @@ a {
 	font-weight: 600;
 }
 
-/* Przycisk ✕ przy kategorii — niewidoczny, pojawia się na hover */
 .cat-delete-btn {
 	background: none;
 	border: none;
@@ -767,12 +712,9 @@ a {
 }
 
 .cat-delete-btn:hover {
-	color: #f44336; /* czerwony przy najechaniu */
+	color: #f44336;
 }
 
-/* ── SELEKTOR KATEGORII W FORMULARZU (CHIPSY) ───────────────────────────────── */
-
-/* Kontener chipsów w formularzu dodawania zadania */
 .cat-chips-picker {
 	display: flex;
 	flex-wrap: wrap;
@@ -785,14 +727,12 @@ a {
 	border-radius: 10px;
 }
 
-/* Tekst zastępczy gdy nie ma kategorii */
 .cat-no-cats {
 	color: rgba(255, 255, 255, 0.4);
 	font-size: 13px;
 	font-style: italic;
 }
 
-/* Pojedynczy chip kategorii — klikalny */
 .cat-chip {
 	background-color: rgba(101, 17, 170, 0.35);
 	color: rgba(255, 255, 255, 0.75);
@@ -802,7 +742,7 @@ a {
 	font-size: 13px;
 	font-weight: 600;
 	cursor: pointer;
-	user-select: none; /* zapobiega zaznaczaniu tekstu przy klikaniu */
+	user-select: none;
 	transition:
 		background-color var(--transition),
 		color var(--transition),
@@ -816,7 +756,6 @@ a {
 	transform: translateY(-1px);
 }
 
-/* Zaznaczony chip — pełny kolor i cień */
 .cat-chip.selected {
 	background-color: var(--active-color);
 	color: #fff;
@@ -824,9 +763,6 @@ a {
 	box-shadow: 0 3px 10px rgba(101, 17, 170, 0.4);
 }
 
-/* ── TAGI KATEGORII NA KARCIE ZADANIA ───────────────────────────────────────── */
-
-/* Kontener tagów pod tytułem/opisem zadania */
 .task-cats {
 	display: flex;
 	flex-wrap: wrap;
@@ -834,7 +770,6 @@ a {
 	margin-top: 6px;
 }
 
-/* Pojedynczy tag kategorii na karcie zadania */
 .task-cat-tag {
 	background-color: rgba(101, 17, 170, 0.5);
 	color: rgba(255, 255, 255, 0.85);
@@ -846,21 +781,16 @@ a {
 	white-space: nowrap;
 }
 
-/* ── RESPONSYWNOŚĆ ───────────────────────────────────────────────────────────── */
-
-/* Tablet — widok tygodnia: 4 kolumny zamiast 7 */
 @media (max-width: 900px) {
 	.week-grid {
 		grid-template-columns: repeat(4, 1fr);
 	}
 }
 
-/* Tablet mały */
 @media (max-width: 768px) {
 	.planner-container {
 		padding: 28px 22px;
 	}
-	/* Nagłówek układa się pionowo (logo nad user-info) */
 	.header {
 		flex-direction: column;
 		align-items: flex-start;
@@ -878,13 +808,11 @@ a {
 	.date-title {
 		font-size: 17px;
 	}
-	/* Tydzień: 3 kolumny */
 	.week-grid {
 		grid-template-columns: repeat(3, 1fr);
 	}
 }
 
-/* Telefon */
 @media (max-width: 600px) {
 	body {
 		padding: 12px;
@@ -904,7 +832,6 @@ a {
 		padding: 9px 14px;
 		font-size: 13px;
 	}
-	/* Tytuł i godzina układają się pionowo */
 	.form-row {
 		flex-direction: column;
 		gap: 0;
@@ -919,7 +846,6 @@ a {
 		min-height: 52px;
 		padding: 5px 4px;
 	}
-	/* Tydzień: 2 kolumny */
 	.week-grid {
 		grid-template-columns: repeat(2, 1fr);
 	}
@@ -931,7 +857,6 @@ a {
 	}
 }
 
-/* Bardzo mały telefon */
 @media (max-width: 400px) {
 	.planner-container {
 		padding: 18px 12px;
@@ -948,7 +873,6 @@ a {
 	}
 }
 
-/* Telefon w poziomie (landscape) z małą wysokością ekranu */
 @media (max-height: 500px) and (orientation: landscape) {
 	body {
 		padding: 8px;
@@ -977,10 +901,9 @@ a {
 	}
 }
 
-/* Responsywność sekcji kategorii */
 @media (max-width: 600px) {
 	.cat-add-row {
-		flex-direction: column; /* pole i przycisk układają się pionowo */
+		flex-direction: column;
 	}
 	.categories-box {
 		padding: 18px 16px;

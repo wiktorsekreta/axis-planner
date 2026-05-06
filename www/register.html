@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AXIS - Register</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&display=swap">
+    <link rel="stylesheet" href="./register.css">
+</head>
+
+<body>
+    <div class="all">
+        <h1>AXIS</h1>
+        <form class="box">
+            <div class="form">
+                <label for="username">nazwa uzytkownika</label>
+                <input type="text" id="username" placeholder="Wpisz swoja nazwe uzytkownika" required
+                    autocomplete="username">
+            </div>
+            <div class="form">
+                <label for="email">email</label>
+                <input type="email" id="email" placeholder="Wpisz swoj email" required autocomplete="email">
+            </div>
+            <div class="form">
+                <label for="password">haslo</label>
+                <img src="./visibility_16dp_000000_FILL0_wght400_GRAD0_opsz20.svg" alt="pokaż hasło" class="open-eye"
+                    id="togglePassword" width="20" height="20">
+                <input type="password" id="password" placeholder="Wpisz swoje haslo" required
+                    autocomplete="new-password">
+            </div>
+            <div class="form">
+                <label for="confirm-password">Potwierdz haslo</label>
+                <img src="./visibility_16dp_000000_FILL0_wght400_GRAD0_opsz20.svg" alt="pokaż hasło"
+                    class="open-eye-confirm" id="togglePassword-confirm" width="20" height="20">
+                <input type="password" id="confirm-password" placeholder="Potwierdz swoje haslo" required
+                    autocomplete="new-password">
+            </div>
+            <div class="remember">
+                <input type="checkbox" id="terms" required>
+                <label for="terms">Akceptuję regulamin</label>
+            </div>
+            <p class="form-error" id="regError"></p>
+            <button type="submit" class="btn">Zarejestruj się</button>
+        </form>
+        <h5>Masz już konto? <a href="login.html">Zaloguj się</a></h5>
+    </div>
+    <script src="./register.js" defer></script>
+</body>
+
+</html>

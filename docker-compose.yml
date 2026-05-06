@@ -1,85 +1,60 @@
-# Ten plik konfiguruje Docker Compose — narzędzie uruchamiające wiele kontenerów naraz.
-# Uruchomienie: docker compose up -d
-# Zatrzymanie:  docker compose down
-#
-# Aplikacja składa się z 3 kontenerów (serwisów):
-#   php        — serwer WWW z PHP, serwuje pliki z folderu /www
-#   db         — baza danych MySQL 8.0
-#   phpmyadmin — panel webowy do zarządzania bazą (dostępny pod localhost:8081)
-
 services:
 
-  # ── SERWER PHP ─────────────────────────────────────────────────────────────
   php:
-    build: ./php        # buduje obraz Dockera na podstawie pliku Dockerfile w folderze /php
+    build: ./php
     ports:
-      - '8080:80'       # port 8080 na komputerze → port 80 wewnątrz kontenera
-                        # otwórz http://localhost:8080 w przeglądarce
+      - '8080:80'
     volumes:
-      - ./www:/var/www/html  # folder /www z projektu montowany do kontenera
-                              # zmiany w plikach PHP/HTML są widoczne natychmiast (bez rebuild)
+      - ./www:/var/www/html
     depends_on:
       db:
-        condition: service_healthy  # PHP czeka aż baza danych będzie gotowa (patrz healthcheck)
+        condition: service_healthy
     environment:
-      # Zmienne środowiskowe przekazywane do PHP — odczytywane w db.php
-      DB_HOST: db        # nazwa hosta bazy (nazwa serwisu w Docker Compose)
-      DB_USER: user      # użytkownik bazy danych
-      DB_PASS: haslo123  # hasło do bazy
-      DB_NAME: axis      # nazwa bazy danych
-    networks:
-      - projekt_net      # kontener należy do sieci "projekt_net" (może rozmawiać z db i phpmyadmin)
-
-  # ── BAZA DANYCH MySQL ──────────────────────────────────────────────────────
-  db:
-    image: mysql:8.0    # gotowy obraz MySQL w wersji 8.0 z Docker Hub
-    restart: always     # kontener uruchamia się ponownie automatycznie po awarii lub restarcie systemu
-    environment:
-      MYSQL_ROOT_PASSWORD: root      # hasło dla konta root (administratora bazy)
-      MYSQL_DATABASE: axis           # automatycznie tworzy bazę "axis" przy pierwszym starcie
-      MYSQL_USER: user               # tworzy użytkownika "user"
-      MYSQL_PASSWORD: haslo123       # hasło dla użytkownika "user"
-    volumes:
-      - db_data:/var/lib/mysql       # dane bazy zapisywane w wolumenie (nie giną po restarcie)
-      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
-        # dump.sql jest automatycznie wykonywany przy pierwszym uruchomieniu kontenera
-        # — tworzy tabele (users, tasks, categories, taskcategories)
-    ports:
-      - '3306:3306'     # port 3306 na komputerze → port 3306 MySQL w kontenerze
-                        # można połączyć się zewnętrznymi narzędziami (np. DBeaver, HeidiSQL)
-    healthcheck:
-      # Sprawdza czy MySQL jest gotowy do przyjęcia połączeń
-      # PHP czeka na ten sygnał zanim się uruchomi (depends_on: condition: service_healthy)
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-proot']
-      interval: 10s   # sprawdza co 10 sekund
-      timeout: 5s     # timeout jednego sprawdzenia
-      retries: 6      # po 6 nieudanych próbach kontener uznawany za "niezdrowy"
+      DB_HOST: db
+      DB_USER: user
+      DB_PASS: haslo123
+      DB_NAME: axis
     networks:
       - projekt_net
 
-  # ── phpMyAdmin ─────────────────────────────────────────────────────────────
-  phpmyadmin:
-    image: phpmyadmin:latest  # gotowy obraz phpMyAdmin (panel webowy do bazy)
-    ports:
-      - '8081:80'       # otwórz http://localhost:8081 aby zobaczyć panel zarządzania bazą
+  db:
+    image: mysql:8.0
+    restart: always
     environment:
-      PMA_HOST: db       # wskazuje na serwis "db" jako serwer MySQL
-      PMA_USER: user     # automatyczne logowanie tym użytkownikiem
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: axis
+      MYSQL_USER: user
+      MYSQL_PASSWORD: haslo123
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    ports:
+      - '3306:3306'
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-proot']
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    networks:
+      - projekt_net
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    ports:
+      - '8081:80'
+    environment:
+      PMA_HOST: db
+      PMA_USER: user
       PMA_PASSWORD: haslo123
     depends_on:
       db:
-        condition: service_healthy  # phpMyAdmin też czeka na gotową bazę
+        condition: service_healthy
     networks:
       - projekt_net
 
-# ── SIEĆ ──────────────────────────────────────────────────────────────────────
-# Wewnętrzna sieć łącząca kontenery — dzięki niej mogą się komunikować po nazwach (np. "db")
 networks:
   projekt_net:
-    driver: bridge  # standardowy typ sieci w Docker Compose
+    driver: bridge
 
-# ── WOLUMENY ──────────────────────────────────────────────────────────────────
-# Wolumen przechowuje dane bazy MySQL poza kontenerem
-# Dzięki temu dane NIE giną gdy kontener jest zatrzymany lub usunięty
 volumes:
   db_data:
