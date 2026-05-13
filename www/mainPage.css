@@ -218,7 +218,7 @@ body::before {
 
 .month-grid-header {
 	display: grid;
-	grid-template-columns: repeat(7, 1fr);
+	grid-template-columns: repeat(7, minmax(0, 1fr));
 	gap: 4px;
 	margin-bottom: 6px;
 }
@@ -235,7 +235,7 @@ body::before {
 
 .month-grid {
 	display: grid;
-	grid-template-columns: repeat(7, 1fr);
+	grid-template-columns: repeat(7, minmax(0, 1fr));
 	gap: 4px;
 }
 
@@ -252,6 +252,8 @@ body::before {
 	display: flex;
 	flex-direction: column;
 	gap: 3px;
+	min-width: 0;
+	overflow: hidden;
 }
 
 .month-day:hover {
@@ -303,10 +305,16 @@ body::before {
 	line-height: 1.4;
 }
 
+.week-view {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
 .week-grid {
 	display: grid;
-	grid-template-columns: repeat(7, 1fr);
+	grid-template-columns: repeat(7, minmax(80px, 1fr));
 	gap: 8px;
+	min-width: 420px;
 }
 
 .week-day-col {
@@ -781,12 +789,6 @@ a {
 	white-space: nowrap;
 }
 
-@media (max-width: 900px) {
-	.week-grid {
-		grid-template-columns: repeat(4, 1fr);
-	}
-}
-
 @media (max-width: 768px) {
 	.planner-container {
 		padding: 28px 22px;
@@ -807,9 +809,6 @@ a {
 	}
 	.date-title {
 		font-size: 17px;
-	}
-	.week-grid {
-		grid-template-columns: repeat(3, 1fr);
 	}
 }
 
@@ -846,14 +845,24 @@ a {
 		min-height: 52px;
 		padding: 5px 4px;
 	}
-	.week-grid {
-		grid-template-columns: repeat(2, 1fr);
-	}
 	.calendar-header {
 		gap: 8px;
 	}
 	.date-title {
 		font-size: 14px;
+	}
+}
+
+@media (max-width: 480px) {
+	.month-task-dot {
+		font-size: 0;
+		height: 5px;
+		padding: 0;
+		border-radius: 3px;
+	}
+	.month-day {
+		min-height: 44px;
+		gap: 2px;
 	}
 }
 
